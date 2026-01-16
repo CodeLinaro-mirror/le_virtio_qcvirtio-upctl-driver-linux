@@ -5,6 +5,7 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/platform_device.h>
 #include <linux/of.h>
 #include <linux/pinctrl/pinctrl.h>
@@ -97,10 +98,16 @@ static int upctl_device_select_state(struct device *dev, const char *state_name)
 	return 0;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
 static int upctl_device_remove(struct platform_device *pdev)
+#else
+static void upctl_device_remove(struct platform_device *pdev)
+#endif
 {
 	dev_dbg(&pdev->dev, "upctl-device remove function called\n");
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
 	return 0;
+#endif
 }
 
 static const struct of_device_id upctl_device_of_match[] = {

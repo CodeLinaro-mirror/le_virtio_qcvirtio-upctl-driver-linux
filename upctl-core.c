@@ -5,6 +5,7 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/platform_device.h>
 #include <linux/of.h>
 #include <linux/of_platform.h>
@@ -198,13 +199,19 @@ static int __init upctl_core_probe(struct platform_device *pdev)
 	return ret;
 }
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
 static int __exit upctl_core_remove(struct platform_device *pdev)
+#else
+static void __exit upctl_core_remove(struct platform_device *pdev)
+#endif
 {
 	struct upctl_core_device *upctl_dev = platform_get_drvdata(pdev);
 
 	dev_info(&pdev->dev, "removing");
 	misc_deregister(&upctl_dev->miscdev);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
 	return 0;
+#endif
 }
 
 static const struct of_device_id upctl_dt_match[] = {
