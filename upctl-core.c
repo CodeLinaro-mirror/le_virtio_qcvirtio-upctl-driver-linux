@@ -202,7 +202,7 @@ static int __init upctl_core_probe(struct platform_device *pdev)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
 static int __exit upctl_core_remove(struct platform_device *pdev)
 #else
-static void __exit upctl_core_remove(struct platform_device *pdev)
+static void upctl_core_remove(struct platform_device *pdev)
 #endif
 {
 	struct upctl_core_device *upctl_dev = platform_get_drvdata(pdev);
@@ -225,7 +225,11 @@ static struct platform_driver upctl_core_driver = {
 		.name = "upctl-core",
 		.of_match_table = upctl_dt_match,
 	},
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
 	.remove = __exit_p(upctl_core_remove),
+#else
+	.remove = upctl_core_remove,
+#endif
 };
 
 module_platform_driver_probe(upctl_core_driver, upctl_core_probe);
